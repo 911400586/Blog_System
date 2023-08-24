@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/lovewall.css">
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <form>
+                <div class="title">
+                    <span>告白墙</span>
+                </div>
+                <div class="text">
+                    <span>谁:</span>
+                    <input type="text" class="from">
+                </div>
+                <div class="text">
+                    <span>对:</span>
+                    <input type="text" class="to">
+                </div>
+                <div class="text" >
+                    <span>说:</span>
+                    <input type="text" class="message">
+                </div>
+                <div class="sub">
+                    <input type="button" value="提交！" >
+                </div>
+            </form>
+        </div>
+    
+    </div>
+    
+    
+    <div class="note">
+       
+    </div>
+</body>
+<!-- <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script> -->
+<script src="js/Jquery.js"></script>
+
+<script>
+    function submit(){
+        var elm1 = document.querySelector('.from');
+        var elm2 = document.querySelector('.to');
+        var elm3 = document.querySelector('.message');
+        var String = elm1.value+" 对 " +elm2.value+" 说: "+elm3.value;
+        var div = document.querySelector('.note');
+        // 创建元素节点
+        var div1 = document.createElement('div');
+        div1.className = 'nt';
+         div1.textContent = String;
+        div.appendChild(div1);
+        var strbody = JSON.stringify({from: elm1.value, to:elm2.value, message:elm3.value});
+        console.log(strbody);
+        $.ajax({
+            method:"POST",
+            url:"message",
+            contentType:"application/json; charset=utf-8",
+            data: strbody,
+            success:function(data){
+            
+                console.log("提交消息成功!");
+            },
+            
+        });
+        console.log("你干嘛");
+     }
+       var sub = document.querySelector('.sub input');
+      sub.onclick = submit;
+    //页面加载的时候发送get请求
+    var div = document.querySelector('.note');
+    $.ajax({
+        method:'GET',
+        url:'message',
+        success:function(body,status){
+                for(var m of body)
+                {
+                    var div1 = document.createElement('div');
+                    div1.className = 'nt';
+                    div1.textContent = m.from+" 对 "+m.to+" 说: "+m.message;
+                    console.log(div1.textContent);
+                    div.appendChild(div1);
+                }
+        }
+    });   
+    
+</script>
+</html>
+ 

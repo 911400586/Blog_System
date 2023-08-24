@@ -1,0 +1,66 @@
+.title{
+    text-align: center;
+    margin: 5px;
+}
+.date{
+    text-align: center;
+    margin: 5px;
+}
+.Container-right p{
+    text-indent: 2em;
+    font-family:'微软雅黑';
+    padding:10px 0;
+}
+.blog-content{
+    
+    padding: 30px
+}
+.blog-content #content{
+    width: 100%;
+    background-color: rgba(226,237,249,0.1);
+}
+.mg{
+    height: 200px;
+    width: 100%;
+    background-color: rgb(7,193,96);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.typing {
+    display: block;
+    height: 113px;
+    width: 553px;
+    font-size: 20px;
+}
+.remark{
+
+    background-color: antiquewhite;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    width: 100%;
+    height: 3000px;
+    
+}
+.item {
+    width: 90%;
+    height: 200px;
+    margin: 10px auto;
+}
+.markcontent{
+    height: 130px;
+    text-indent: 2em;
+    border: 1px solid red;
+}
+.maput{
+    width: 80px;
+}
+.time {
+    text-align: right;
+}
+.retitle{
+    text-align: center;
+    font-size: 30px;
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/comman.css">
+    <link rel="stylesheet" href="css/edit.css">
+    <link rel="stylesheet" href="editor.md/css/editormd.css">
+    <script src="js/Jquery.js"></script>
+    <script src="editor.md/editormd.min.js"></script>
+    <script src="editor.md/lib/prettify.min.js"></script>
+    <script src="editor.md/editormd.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var editor = editormd("editor", {
+                width: "80%",
+                height: "100%",
+                path: "editor.md/lib/"
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="dav"><img src="images/郭.png" alt="">
+        <span class="title">我的博客系统</span>
+        <span class="holder"></span>
+        <a href="blog_list.html">主页</a>
+        <a href="blog_edit.html">写博客</a>
+        <a href="logout">注销</a>
+    </div>
+    <div class="t1">
+        <form action="blog" method="post">
+            <input type="text" class="title" name="title" placeholder="在此写下你的博客标题">
+            <button id="submit">发布文章</button>
+    </div>
+    <div id="editor">
+        <textarea name="content" style="display:none"></textarea>
+    </div>
+    </form>
+    <script>
+        function sub() {
+            $.ajax({
+                method: "GET",
+                url: "login",
+                success: function (body) {
+                    if (body.userid && body.userid > 0) {
+
+                        //to do 渲染页面
+                    }
+                    else {
+                        location.assign('blog_login.html');
+                    }
+                }
+            })
+        }
+        sub();
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+<!-- 使用说明 editor.md-->
+<!-- <link rel="stylesheet" href="editormd/css/editormd.css" />
+<div id="test-editor">
+    <textarea style="display:none;">### 关于 Editor.md
+
+**Editor.md** 是一款开源的、可嵌入的 Markdown 在线编辑器（组件），基于 CodeMirror、jQuery 和 Marked 构建。
+    </textarea>
+</div>
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="editormd/editormd.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+        var editor = editormd("test-editor", {
+            // width  : "100%",
+            // height : "100%",
+            path   : "editormd/lib/"
+        });
+    });
+</script> -->

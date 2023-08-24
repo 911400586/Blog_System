@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/comman.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+    <div class="dav"><img src="images/郭.png" alt="">
+        <span class="title">我的博客系统</span>
+        <span class="holder"></span>
+        <a href="blog_list.html">主页</a>
+        <a href="blog_edit.html">写博客</a>
+
+    </div>
+
+    <div class="Container" type="POST">
+        <div class="login">
+            <div class="title"><span>博客登录</span></div>
+            <form action="login" method="post">
+                <div class="username" ><span>账号:</span><input type="text" placeholder="username" name="username"></div>
+                <div class="password"><span>密码:</span><input type="password" placeholder="password" name="password"></div>
+                <div class="submit">
+                    <input type="submit" value="登  录">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="js/Jquery.js"></script>
+    <script>
+        function sub()
+        {
+            $.ajax({
+                method:"GET",
+                url:"login",
+                success:function(body)
+                {
+                    if(body.userid && body.userid>0)
+                    {
+                        console.log("assign");
+                        location.assign('blog_list.html');
+                    }
+                    else{
+                        //什么都不做
+                    }
+                }
+            })
+        }
+        sub();
+    </script>   
+</body>
+</html>

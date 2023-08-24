@@ -1,0 +1,47 @@
+.login{
+    height: 350px;
+    width: 500px;
+    border-radius: 30px;
+    background-color: rgba(255,255,255,0.8);
+    margin: auto auto;
+}
+.login .title{
+    font-family: '宋体';
+    font-style: italic;
+    font-size: 50px;
+    font-weight: 700;
+    color: chocolate;
+    text-align: center;
+    margin: 50px;
+}
+.login .username{
+    text-align: center;
+    margin: 20px;
+    font-size: 25px;
+}
+.login input{
+    font-size: 20px;
+    border-radius: 10px;
+    margin: 10px;
+}
+.login .password{
+    text-align: center;
+    margin: 10px;
+    font-size: 25px;
+    
+}
+.login .submit{
+    text-align: center;
+    font-size: 25px;
+    
+}
+.login .submit input{
+   width: 100px;
+   height: 50px;
+   border: 2px solid chartreuse;
+   color: brown;
+   background-color: bisque;
+}
+.login .submit input:active{
+    background-color:#666;
+}

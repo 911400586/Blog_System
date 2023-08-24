@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/comman.css">
+    <link rel="stylesheet" href="css/blogcontent.css">
+    <link rel="stylesheet" href="editor.md/css/editormd.min.css">
+</head>
+
+<body>
+    <div class="dav"><img src="images/郭.png" alt="">
+        <span class="title">我的博客系统</span>
+        <span class="holder"></span>
+        <a href="blog_list.html">主页</a>
+        <a href="blog_edit.html">写博客</a>
+        <a href="logout">注销</a>
+    </div>
+
+    <div class="Container">
+        <div class="Container-left">
+            <div class="card">
+                
+                
+                <h3>汽院男神</h3>
+                <a href="https://github.com/">github地址</a>
+                <div class="counter">
+                    <span>文章</span>
+                    <span>分类</span>
+                </div>
+                <div class="counter">
+                    <span>1</span>
+                    <span>2</span>
+                </div>
+            </div>
+        </div>
+        <div class="Container-right">
+            <div class="blog-content">
+                <div class="title">
+                    <h3>这是我的第一篇博客</h3>
+                </div>
+                <div class="date">2023-08-15</div>
+                <div id="content">
+                    这是平
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mg">
+        <div>
+            <h1>评论区</h1>
+            <hr>
+            <form action="mark"+location.search method="post">
+            <textarea class="typing" name="content"></textarea>
+            <input type="submit" class="maput" onclick="mark()"></button>
+            </form>
+            <div id="commend"></div>
+        </div>
+
+    </div>
+    <div class="remark">
+        <!-- <div class="item">
+                <div class="retitle">
+                    bitezz
+                </div>
+                <div class="time">
+                2023-11-21
+                </div>
+                <div class="markcontent">
+                        3123123
+                </div>
+        </div> -->
+
+    </div>
+    <script src="js/Jquery.js"></script>
+    <!-- 要保证这几个 js 的加载在 jquery 之后. editor.md 依赖了 jquery -->
+    <script src="editor.md/lib/marked.min.js"></script>
+    <script src="editor.md/lib/prettify.min.js"></script>
+    <script src="editor.md/editormd.js"></script>
+    <script>
+        function setimg()
+        {
+         var img = document.createElement('img');
+        img.src = 'img'+location.search;
+          var card = document.querySelector('.card');
+        
+        card.insertBefore(img,card.firstChild);
+
+        }
+        setimg();
+       function mark()
+       {
+            var form = document.querySelector('form');
+            form.action = "mark"+location.search;
+       }
+        function getmark(){
+            $.ajax({
+                method: "GET",
+                url: "mark" + location.search,
+                success: function (body) {
+                    for(data of body){
+                    var remark = document.querySelector('.remark');
+                    //创建item
+                   var itemdiv = document.createElement('div');
+                   itemdiv.className = 'item'; 
+                   //创建用户名
+                   var titlediv = document.createElement('div');
+                   titlediv.className = 'retitle';
+                   titlediv.innerHTML = data.username;
+                   itemdiv.appendChild(titlediv);
+                   //创建日期
+                   var timediv = document.createElement('div');
+                   timediv.className = 'time';
+                   timediv.innerHTML = data.posttime;
+                   itemdiv.appendChild(timediv);
+                   //评论内容
+                   var contentdiv = document.createElement('div');
+                   contentdiv.className = 'markcontent';
+                   contentdiv.innerHTML = data.content;
+                   itemdiv.appendChild(contentdiv);
+                   remark.appendChild(itemdiv);
+                    }
+                }
+            })
+        }
+        function sub() {
+            $.ajax({
+                method: "GET",
+                url: "login" + location.search,
+                success: function (body) {
+                    if (body.userid && body.userid > 0) {
+                        //todo
+                    }
+                    else {
+
+                        location.assign('blog_login.html');
+                    }
+                }
+            })
+        }
+        sub();
+        function user() {
+            $.ajax({
+                method: "GET",
+                url: "user" + location.search,
+                success: function (body) {
+                    let h3 = document.querySelector(".card h3");
+                    h3.innerHTML = body.username;
+                }
+            })
+        }
+        user();
+        function getblog() {
+            $.ajax({
+                method: "GET",
+                url: "blog" + location.search,
+                success: function (body) {
+                    //1.更新标题
+                    let titlediv = document.querySelector(".blog-content .title");
+                    titlediv.innerHTML = body.title;
+                    //2.更新时间
+                    let timediv = document.querySelector(".blog-content .date");
+                    timediv.innerHTML = body.posttime;
+                    //3.将markdown内容解析成html并加入content中
+                    editormd.markdownToHTML('content', { markdown: body.content });
+                }
+            })
+        }
+        getblog(); 
+        getmark();
+    </script>
+</body>
+
+</html>
