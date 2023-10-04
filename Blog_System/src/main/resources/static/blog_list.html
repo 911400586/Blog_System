@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>博客列表</title>
+    <link rel="stylesheet" href="css/list.css" />
+    <link rel="stylesheet" href="css/blog_list.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/logout.js"></script>
+    <script src="js/urlUtil.js"></script>
+    <script src="js/vue.js"></script>
+    <style>
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+      }
+
+      .container {
+        padding-top: 80px;
+        height: auto;
+      }
+
+      .container-right {
+        width: auto;
+      }
+
+      .blog-pagnation-wrapper {
+        height: 40px;
+        margin: 16px 0;
+        text-align: center;
+      }
+
+      .blog-pagnation-item {
+        display: inline-block;
+        padding: 8px;
+        border: 1px solid #d0d0d5;
+        color: #333;
+      }
+
+      .blog-pagnation-item:hover {
+        background: #4e4eeb;
+        color: #fff;
+      }
+      .blog-pagnation-item.actvie {
+        background: #4e4eeb;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- 导航栏 -->
+      <div class="nav">
+        <img src="img/logo2.jpg" alt="" />
+        <span class="title">我的博客系统</span>
+        <!-- 用来占据中间位置 -->
+        <span class="spacer"></span>
+        <a href="blog_list.html">主页</a>
+        <template v-if="user!==null">
+          <a href="myblog_list.html">我的相关博客</a>
+          <a href="blog_add.html">写博客</a>
+          <a href="javascript:logout()">注销</a>
+        </template>
+        <template v-else>
+          <a id="loginElement" href="login.html">登陆</a>
+        </template>
+        <!-- <a href="#">注销</a> -->
+      </div>
+
+      <!-- 版心 -->
+      <div class="container">
+        <!-- 右侧内容详情 -->
+        <div class="container-right" style="width: 100%">
+          <!-- 每一篇博客包含标题, 摘要, 时间 -->
+          <div id="blog" v-if="articles.length!=0">
+            <template v-for="item in articles">
+              <div class="blog">
+                <div class="title">{{item.title}}</div>
+                <div class="date">{{item.createtime}}</div>
+                <div class="desc">{{item.content}}</div>
+                <a @click.prevent="detail(item.id)" href="blog_content.html" class="detail">查看全文 &gt;&gt;</a>
+              </div>
+            </template>
+          </div>
+          <template v-else>
+            <div><h>暂无内容</h></div>
+          </template>
+          <hr />
+
+          <div class="blog-pagnation-wrapper">
+            <button
+              class="blog-pagnation-item"
+              id="firstbt"
+              @click="getArticle(0)"
+            >
+              首页
+            </button>
+            <button
+              class="blog-pagnation-item"
+              id="upbt"
+              @click="getArticle(-1)"
+            >
+              上一页
+            </button>
+            <button
+              class="blog-pagnation-item"
+              id="downbt"
+              @click="getArticle(1)"
+            >
+              下一页
+            </button>
+            <button
+              class="blog-pagnation-item"
+              id="lastbt"
+              @click="getArticle(-2)"
+            >
+              末页
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- vue -->
+    <script>
+      var body = {
+        data() {
+          return {
+            user: {},
+            articles: {},
+            pageSize: 2,
+            index: 1,
+            lastpage: 1,
+            currentIndex: 1,
+          };
+        },
+        methods: {
+          detail(id) {
+            var url = "blog_content.html?id="+id;
+            location.href=url;
+          },
+          isLogin() {
+            jQuery.ajax({
+              url: "/islogin",
+              type: "POST",
+              data: {},
+              success: (res) => {
+                if (res.code == 200 && res.data !== -1) {
+                  // 已经登录
+                  this.user = res.data;
+                } else {
+                  this.user = null;
+                }
+              },
+            });
+          },
+          getArticle(index) {
+            if (index == -2) {
+              this.currentIndex = this.lastpage;
+            } else if (index == 0) {
+              this.currentIndex = 1;
+            } else {
+              if (
+                this.currentIndex + index > 0 &&
+                this.currentIndex + index <= this.lastpage
+              ) {
+                this.currentIndex += index;
+              } else {
+                return false;
+              }
+            }
+
+            jQuery.ajax({
+              method: "POST",
+              url: "/article/mainlist",
+              data: {
+                pageSize: this.pageSize,
+                index: this.currentIndex,
+              },
+              success: (res) => {
+                if (res.code == 200) {
+                  this.articles = res.data;
+                }
+              },
+            });
+          },
+          getArt() {
+            jQuery.ajax({
+              method: "POST",
+              url: "/article/mainlist",
+              data: {
+                pageSize: this.pageSize,
+                index: this.currentIndex,
+              },
+              success: (res) => {
+                if (res.code == 200) {
+                  this.articles = res.data;
+                }
+              },
+            });
+          },
+          getcount() {
+            jQuery.ajax({
+              method: "GET",
+              url: "/article/countnum",
+              success: (res) => {
+                if (res.code == 200) {
+                  this.lastpage = Math.ceil(res.data / this.pageSize);
+                } else {
+                  this.lastpage = 1;
+                }
+              },
+            });
+          },
+        },
+
+        mounted() {
+          // 判断用户是否已经登录
+          this.isLogin();
+          this.getcount();
+          //获取文章
+          this.getArticle(0);
+          //获取文章总数
+        },
+      };
+
+      var app = Vue.createApp(body).mount("#root");
+    </script>
+    
+  </body>
+</html>

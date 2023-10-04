@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>博客编辑</title>
+
+    <!-- 引入自己写的样式 -->
+    <link rel="stylesheet" href="css/conmmon.css" />
+    <link rel="stylesheet" href="css/blog_edit.css" />
+
+    <!-- 引入 editor.md 的依赖 -->
+    <link rel="stylesheet" href="editor.md/css/editormd.min.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="editor.md/editormd.js"></script>
+  </head>
+
+  <body>
+    <div id="root">
+      <!-- 导航栏 -->
+      <div class="nav">
+        <img src="img/logo2.jpg" alt="" />
+        <span class="title">我的博客系统</span>
+        <!-- 用来占据中间位置 -->
+        <span class="spacer"></span>
+        <a href="blog_list.html">主页</a>
+        <a href="#">注销</a>
+      </div>
+      <!-- 编辑框容器 -->
+      <div class="blog-edit-container">
+        <!-- 标题编辑区 -->
+        <div class="title">
+          <input type="text" placeholder="在这里写下文章标题" id="title" />
+          <button @click="mysub">更新文章</button>
+          <template v-if=" article!=null && article.state==2">
+            <button @click="updata">发布文章</button>
+          </template>
+        </div>
+        <!-- 创建编辑器标签 -->
+        <div id="editorDiv">
+          <textarea id="editor-markdown" style="display: none"></textarea>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var editor = null;
+    var body = {
+      data() {
+        return {
+          article: null,
+          isget: false,
+        };
+      },
+      methods: {
+        initEdit(md) {
+          // 编辑器设置
+          editor = editormd("editorDiv", {
+            // 这里的尺寸必须在这里设置. 设置样式会被 editormd 自动覆盖掉.
+            width: "100%",
+            // 高度 100% 意思是和父元素一样高. 要在父元素的基础上去掉标题编辑区的高度
+            height: "600px",
+            // 编辑器中的初始内容
+            markdown: md,
+            // 指定 editor.md 依赖的插件路径
+            path: "editor.md/lib/",
+            saveHTMLToTextarea: true, //
+          });
+        },
+        getArticle() {
+          jQuery.ajax({
+            method: "GET",
+            url: "/article/getArticleById" + location.search,
+            success: (res) => {
+              if (res.code == 200) {
+                jQuery("#title").val(res.data.title);
+                this.article = res.data;
+                //console.log(this.article.state);
+                this.initEdit(res.data.content); // 初始化编译器的值
+                this.isget = true;
+              } else {
+                alert("获取信息失败!");
+              }
+            },
+          });
+        },
+        mysub() {
+          // alert(editor.getValue()); // 获取值
+          // editor.setValue("#123") // 设置值
+          if (!this.isget) {
+            alert("提交异常!");
+            return;
+          }
+          var title = jQuery("#title").val();
+          var content = editor.getValue();
+          if (title == "" || content == "") {
+            alert("文章或标题不能为空");
+            return;
+          }
+          jQuery("#submit").attr("disabled", "disabled");
+          jQuery.ajax({
+            method: "POST",
+            url: "/article/update" + location.search,
+            data: {
+              title: title,
+              content: content,
+            },
+            success: function (res) {
+              if (res.code == 200) {
+                alert("恭喜你修改文章成功!");
+                location.href = "myblog_list.html";
+              } else {
+                alert("修改失败!");
+                jQuery("#submit").removeAttr("disabled");
+              }
+            },
+          });
+        },
+        updata() {
+          // alert(editor.getValue()); // 获取值
+          // editor.setValue("#123") // 设置值
+          if (!this.isget) {
+            alert("提交异常!");
+            return;
+          }
+          var title = jQuery("#title").val();
+          var content = editor.getValue();
+          if (title == "" || content == "") {
+            alert("文章或标题不能为空");
+            return;
+          }
+          jQuery("#submit").attr("disabled", "disabled");
+          jQuery.ajax({
+            method: "GET",
+            url:
+              "/article/state" +
+              location.search +
+              "&state=" +
+              this.article.state,
+            success: function (res) {
+              if (res.code == 200) {
+                alert("恭喜你文章发布!");
+                location.href = "myblog_list.html";
+              } else {
+                alert("文章发布失败!");
+                jQuery("#submit").removeAttr("disabled");
+              }
+            },
+          });
+        },
+      },
+      beforeMount() {
+        //this.getArticle();
+      },
+      mounted() {
+        this.getArticle();
+      },
+    };
+
+    var app = Vue.createApp(body).mount("#root");
+  </script>
+</html>
